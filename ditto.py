@@ -9,15 +9,18 @@ import json
 
 
 def track_function(func):
+    """
+    Tracks the module of the function that it decorates.
+    """
     @wraps(func)
     def wrapper(*args, **kwargs):
         file_path = Path(inspect.getfile(func))
         function_name = f"{file_path.name.rstrip('.py')}.{func.__name__}"
-        
         print(f'Function being called: {function_name}')
-        file_contents = open(file_path, 'r').read()
+
         original_module_folder = os.path.join(file_path.parent, file_path.name.rstrip('.py'))
         print(f'Path to module it belongs to: {original_module_folder}')
+
         saved_module_folder = os.path.join(file_path.parent, 'saved_modules', file_path.name.rstrip('.py'))
         used_module_path = os.path.join(saved_module_folder, f'{NOW}.py')
 
@@ -28,6 +31,7 @@ def track_function(func):
 
         # If this is a new version of the module, save it.
         save_new_code = True
+        file_contents = open(file_path, 'r').read()
         for previous_fname in os.listdir(saved_module_folder):
             if previous_fname != '.ipynb_checkpoints':
                 previous_fname_path = os.path.join(saved_module_folder, previous_fname)
@@ -45,13 +49,14 @@ def track_function(func):
         EXPERIMENT[function_name] = used_module_path
         print()
 
-        # Call the function
         return func(*args, **kwargs)
     return wrapper
 
 
-
 def save_experiment(func):
+    """
+    Initializes and saves an experiment.
+    """
     @wraps(func)
     def wrapper(*args, **kwargs):
         # Initialize a fresh EXPERIMENT dictionary and NOW value for this invocation
