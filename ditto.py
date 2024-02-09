@@ -11,25 +11,26 @@ import json
 def track_function(func):
     @wraps(func)
     def wrapper(*args, **kwargs):
-        function_name = func.__name__
         file_path = Path(inspect.getfile(func))
+        function_name = f"{file_path.name.rstrip('.py')}.{func.__name__}"
         
         print(f'Function being called: {function_name}')
         file_contents = open(file_path, 'r').read()
-        module_folder = os.path.join(file_path.parent, 'saved_modules', file_path.name.rstrip('.py'))
-        print(f'Path to module it belongs to: {module_folder}')
-        used_module_path = os.path.join(module_folder, f'{NOW}.py')
+        original_module_folder = os.path.join(file_path.parent, file_path.name.rstrip('.py'))
+        print(f'Path to module it belongs to: {original_module_folder}')
+        saved_module_folder = os.path.join(file_path.parent, 'saved_modules', file_path.name.rstrip('.py'))
+        used_module_path = os.path.join(saved_module_folder, f'{NOW}.py')
 
         # Create a new folder for this module if one doesn't exist
-        if not os.path.exists(module_folder):
-            os.makedirs(module_folder)
+        if not os.path.exists(saved_module_folder):
+            os.makedirs(saved_module_folder)
             print(f'Created new folder for {file_path.name}')
 
         # If this is a new version of the module, save it.
         save_new_code = True
-        for previous_fname in os.listdir(module_folder):
+        for previous_fname in os.listdir(saved_module_folder):
             if previous_fname != '.ipynb_checkpoints':
-                previous_fname_path = os.path.join(module_folder, previous_fname)
+                previous_fname_path = os.path.join(saved_module_folder, previous_fname)
                 fname_contents = open(previous_fname_path, 'r').read()
                 if file_contents == fname_contents:
                     print(f'Reusing saved file: {previous_fname}')

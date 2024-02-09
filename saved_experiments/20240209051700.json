@@ -1,0 +1,9 @@
+{
+    "controller.run": "C:\\Users\\David\\Desktop\\github\\ditto\\saved_modules\\controller\\20240209051546.py",
+    "get_data.run": "C:\\Users\\David\\Desktop\\github\\ditto\\saved_modules\\get_data\\20240209051546.py",
+    "train_model.run": "C:\\Users\\David\\Desktop\\github\\ditto\\saved_modules\\train_model\\20240209051700.py",
+    "evaluate_model.run": "C:\\Users\\David\\Desktop\\github\\ditto\\saved_modules\\evaluate_model\\20240209051700.py",
+    "results": {
+        "accuracy": 0.9733333333333334
+    }
+}
