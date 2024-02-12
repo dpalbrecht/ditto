@@ -14,22 +14,23 @@ def track_function(func):
     """
     @wraps(func)
     def wrapper(*args, **kwargs):
+        # Get the name of the function being called
         file_path = Path(inspect.getfile(func))
         function_name = f"{file_path.name.rstrip('.py')}.{func.__name__}"
         print(f'Function being called: {function_name}')
 
+        # Construct the path of the module the function is defined in
         original_module_folder = os.path.join(file_path.parent, file_path.name.rstrip('.py'))
         print(f'Path to module it belongs to: {original_module_folder}')
 
-        saved_module_folder = os.path.join(file_path.parent, 'saved_modules', file_path.name.rstrip('.py'))
-        used_module_path = os.path.join(saved_module_folder, f'{NOW}.py')
-
         # Create a new folder for this module if one doesn't exist
+        saved_module_folder = os.path.join(file_path.parent, 'saved_modules', file_path.name.rstrip('.py'))
         if not os.path.exists(saved_module_folder):
             os.makedirs(saved_module_folder)
             print(f'Created new folder for {file_path.name}')
 
-        # If this is a new version of the module, save it.
+        # If this is a new version of the module, save it
+        used_module_path = os.path.join(saved_module_folder, f'{NOW}.py')
         save_new_code = True
         file_contents = open(file_path, 'r').read()
         for previous_fname in os.listdir(saved_module_folder):
@@ -46,9 +47,10 @@ def track_function(func):
             with open(used_module_path, 'w') as f:
                 f.write(file_contents)
 
+        # Log experiment details
         EXPERIMENT[function_name] = used_module_path
-        print()
 
+        print()
         return func(*args, **kwargs)
     return wrapper
 
@@ -74,6 +76,5 @@ def save_experiment(func):
             f.write(json.dumps(EXPERIMENT, indent=4))
             
         print('Done!')
-
         return None
     return wrapper
